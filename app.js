@@ -7,9 +7,17 @@ app.use(express.urlencoded({ extended: true }));
 // Lista en memoria
 let productos = [];
 
-// Página HTML con formulario y lista de productos
+// Página HTML con formulario, lista y botón para eliminar productos
 app.get('/', (req, res) => {
-  let listaHTML = productos.map(p => `<li>${p.nombre} - $${p.precio}</li>`).join('');
+  let listaHTML = productos.map(p => `
+    <li>
+      ${p.nombre} - $${p.precio}
+      <form action="/eliminar/${p.id}" method="POST" style="display:inline;">
+        <button type="submit">Eliminar</button>
+      </form>
+    </li>
+  `).join('');
+
   res.send(`
     <!DOCTYPE html>
     <html>
@@ -18,7 +26,9 @@ app.get('/', (req, res) => {
         <style>
           body { font-family: Arial; margin: 2em; }
           input, button { margin-top: 0.5em; display: block; }
-          ul { margin-top: 1em; }
+          ul { margin-top: 1em; list-style-type: none; padding: 0; }
+          li { margin-bottom: 0.5em; }
+          form { display: inline; }
         </style>
       </head>
       <body>
@@ -46,6 +56,13 @@ app.post('/agregar', (req, res) => {
   }
 
   productos.push({ id: productos.length + 1, nombre, precio });
+  res.redirect('/');
+});
+
+// Ruta POST para eliminar producto por ID
+app.post('/eliminar/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  productos = productos.filter(p => p.id !== id);
   res.redirect('/');
 });
 
