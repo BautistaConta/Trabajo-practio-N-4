@@ -1,4 +1,3 @@
-// Lista en memoria (simula base de datos)
 let productos = [];
 
 function agregarProducto(nombre, precio) {
@@ -14,7 +13,12 @@ function obtenerProductos() {
   return productos;
 }
 
+function eliminarProducto(id) {
+  productos = productos.filter(p => p.id !== id);
+}
+
 module.exports = {
   agregarProducto,
-  obtenerProductos
+  obtenerProductos,
+  eliminarProducto
 };
