@@ -5,7 +5,9 @@
   <style>
     body { font-family: Arial; margin: 2em; }
     input, button { margin-top: 0.5em; display: block; }
-    ul { margin-top: 1em; }
+    ul { margin-top: 1em; list-style-type: none; padding: 0; }
+    li { margin-bottom: 0.5em; }
+    button.eliminar { margin-left: 1em; color: red; }
   </style>
 </head>
 <body>
@@ -30,6 +32,16 @@
       data.forEach(p => {
         const li = document.createElement('li');
         li.textContent = `${p.nombre} - $${p.precio}`;
+
+        const btn = document.createElement('button');
+        btn.textContent = 'Eliminar';
+        btn.classList.add('eliminar');
+        btn.onclick = async () => {
+          await fetch(`/productos/${p.id}`, { method: 'DELETE' });
+          cargarProductos();
+        };
+
+        li.appendChild(btn);
         lista.appendChild(li);
       });
     }
@@ -47,7 +59,6 @@
       cargarProductos();
     });
 
-    // Cargar productos al cargar la página
     cargarProductos();
   </script>
 </body>
