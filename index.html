@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Productos</title>
+  <style>
+    body { font-family: Arial; margin: 2em; }
+    input, button { margin-top: 0.5em; display: block; }
+    ul { margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Agregar Producto</h1>
+  <form id="formulario">
+    <input type="text" id="nombre" placeholder="Nombre del producto" required />
+    <input type="number" id="precio" placeholder="Precio" required />
+    <button type="submit">Agregar</button>
+  </form>
+
+  <h2>Lista de Productos</h2>
+  <ul id="lista-productos"></ul>
+
+  <script>
+    const formulario = document.getElementById('formulario');
+    const lista = document.getElementById('lista-productos');
+
+    async function cargarProductos() {
+      const res = await fetch('/productos');
+      const data = await res.json();
+      lista.innerHTML = '';
+      data.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${p.nombre} - $${p.precio}`;
+        lista.appendChild(li);
+      });
+    }
+
+    formulario.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value;
+      const precio = document.getElementById('precio').value;
+      await fetch('/agregar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, precio })
+      });
+      formulario.reset();
+      cargarProductos();
+    });
+
+    // Cargar productos al cargar la página
+    cargarProductos();
+  </script>
+</body>
+</html>
