@@ -4,13 +4,16 @@ const db = require('./db');
 
 const app = express();
 app.use(express.json());
+app.use(express.static(__dirname)); // Para servir el index.html
 
-// Servir el archivo HTML
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Ruta lógica: agregar producto
+app.get('/productos', (req, res) => {
+  res.json(db.obtenerProductos());
+});
+
 app.post('/agregar', (req, res) => {
   const { nombre, precio } = req.body;
   if (!nombre || !precio) {
@@ -20,13 +23,12 @@ app.post('/agregar', (req, res) => {
   res.status(201).json({ mensaje: 'Producto agregado' });
 });
 
-// Ruta lógica: obtener productos
-app.get('/productos', (req, res) => {
-  const productos = db.obtenerProductos();
-  res.json(productos);
+app.delete('/productos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  db.eliminarProducto(id);
+  res.status(200).json({ mensaje: 'Producto eliminado' });
 });
 
-// Iniciar servidor
 app.listen(3000, () => {
   console.log('Servidor corriendo en http://localhost:3000');
 });
